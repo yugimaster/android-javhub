@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="2dp">
+
+    <ImageView
+        android:id="@+id/movie_poster"
+        android:layout_width="100dp"
+        android:layout_height="75dp"
+        android:contentDescription="desc"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:scaleType="fitCenter"/>
+
+    <TextView
+        android:id="@+id/movie_title"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="40dp"
+        android:layout_toEndOf="@+id/movie_poster"
+        android:paddingBottom="10dp"
+        android:text="txt"
+        android:textSize="13sp"/>
+
+    <TextView
+        android:id="@+id/movie_link"
+        android:layout_width="wrap_content"
+        android:layout_height="15dp"
+        android:layout_marginEnd="50dp"
+        android:layout_alignStart="@+id/movie_title"
+        android:layout_below="@+id/movie_title"
+        android:text="1234"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/movie_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_alignBaseline="@+id/movie_link"
+        android:layout_alignBottom="@+id/movie_link"
+        android:layout_alignParentEnd="true"
+        android:text="23days ago"
+        android:textSize="10sp"/>
+
+</RelativeLayout>

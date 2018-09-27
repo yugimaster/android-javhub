@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">JavHub</string>
+    <string name="category">类型：</string>
+    <string name="actors">主演：</string>
+    <string name="desc">简介：</string>
+    <string name="address">播放地址</string>
+</resources>
