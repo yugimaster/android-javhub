@@ -29,16 +29,20 @@ import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
 import com.yugimaster.javhub.api.MovieList;
+import com.yugimaster.javhub.bean.HighPronMovie;
 import com.yugimaster.javhub.bean.JsonData;
+import com.yugimaster.javhub.bean.JsonSqlResult;
 import com.yugimaster.javhub.bean.MyFavMovies;
 import com.yugimaster.javhub.bean.VideoItem;
 import com.yugimaster.javhub.drawer.Item;
 import com.yugimaster.javhub.drawer.MyMenuAdapter;
+import com.yugimaster.javhub.sql.Util;
 import com.yugimaster.javhub.view.CustomAdapter;
 import com.yugimaster.javhub.view.RowItem;
 
 import org.jsoup.helper.StringUtil;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ListView listView;
     private MyMenuAdapter<Item> myMenuAdapter = null;
     private List<VideoItem> myFavVideoItems = null;
+    private List<HighPronMovie> mySqlMovies = null;
 
     private ProgressDialog dialog;
     private SearchView searchView;
@@ -70,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final int INIT_HOME = 1;
     private static final int REFRESH_LIST = 2;
     private static final int INIT_MY_FAV = 3;
+    private static final int INIT_SQL_MOVIE = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +92,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         currentStatus = INIT_HOME;
 
         firstInit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
@@ -180,8 +191,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void firstInit() {
         if (isNetworkAvailable(MainActivity.this)) {
             showLoadingDialog();
-//            new Thread(parse_html).start();
-            new Thread(parse_myfav).start();
+            initMenuDrawer();
+            new Thread(get_sql_query).start();
         } else
             showTipsDialog();
     }
@@ -249,6 +260,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             String playLists = StringUtil.join(playList, "/");
             RowItem rowItem = new RowItem(imgUrl, title, productId, str_tags, actresses, productId,
                     desc, playLists);
+            rowItemList.add(rowItem);
+        }
+        initListView();
+    }
+
+    private void initMySqlMovieListView() {
+        for (int i = 0; i < mySqlMovies.size(); i++) {
+            HighPronMovie movieItem = mySqlMovies.get(i);
+            String posterUrl = movieItem.getPosterUrl();
+            String title = movieItem.getTitle();
+            String productId = movieItem.getProductId();
+            String actors = movieItem.getActors();
+            String tags = movieItem.getTags();
+            String vids = movieItem.getVidLists();
+            if (actors == null)
+                actors = "";
+            actors = actors.replace("|", ", ");
+            tags = tags.replace("|", ", ");
+            vids = vids.replace("|", "/");
+            RowItem rowItem = new RowItem(posterUrl, title, productId, tags, actors, productId, title, vids);
             rowItemList.add(rowItem);
         }
         initListView();
@@ -331,6 +362,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     };
 
+    Runnable get_sql_query = new Runnable() {
+        @Override
+        public void run() {
+            Util.query("select * from movie");
+            String movieSqlJson = Util.getSqlJson();
+            System.out.println("Movie sql json: " + movieSqlJson);
+            Gson gson = new Gson();
+            JsonSqlResult mySqlResult = gson.fromJson(movieSqlJson, JsonSqlResult.class);
+            mySqlMovies = mySqlResult.getData().getVideos();
+            currentStatus = INIT_SQL_MOVIE;
+            handler.sendEmptyMessage(currentStatus);
+        }
+    };
+
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -347,6 +392,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 case INIT_MY_FAV:
                     initMenuDrawer();
                     initMyFavListView();
+                    dialog.dismiss();
+                    break;
+                case INIT_SQL_MOVIE:
+                    clearListView();
+                    initMySqlMovieListView();
                     dialog.dismiss();
                     break;
             }
