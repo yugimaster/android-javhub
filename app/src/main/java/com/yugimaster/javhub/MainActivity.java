@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String requestUrl;
     private String categoryLink;
     private String jsonMyFav;
+    private String sqlQuery;
     private int currentStatus;
 
     private static final String HOST = "http://sherwoodbp.com";
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         categoryLink = "/";
         jsonMyFav = "";
         currentStatus = INIT_HOME;
+        sqlQuery = "select * from movie";
 
         firstInit();
     }
@@ -178,6 +180,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public boolean onQueryTextSubmit(String query) {
                 Toast.makeText(getApplicationContext(), "Search query submit " + query,
                         Toast.LENGTH_SHORT).show();
+                sqlQuery = String.format("select * from movie where CONCAT(idProduct,strTitle,strCategories) LIKE '%s'", "%" + query + "%");
+                System.out.println("sql query: " + sqlQuery);
+                new Thread(get_sql_query).start();
                 return false;
             }
 
@@ -365,7 +370,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Runnable get_sql_query = new Runnable() {
         @Override
         public void run() {
-            Util.query("select * from movie");
+            Util.query(sqlQuery);
             String movieSqlJson = Util.getSqlJson();
             System.out.println("Movie sql json: " + movieSqlJson);
             Gson gson = new Gson();
