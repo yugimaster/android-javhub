@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.ljy.devring.DevRing;
+import com.ljy.devring.image.support.GlideApp;
 import com.yugimaster.javhub.R;
 
 import java.util.List;
@@ -66,12 +68,7 @@ public class CustomAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Glide
-            .with(mContext)
-            .load(row_pos.getPoster_url()) // image url
-            .placeholder(R.drawable.no_poster) // the default image
-            .diskCacheStrategy(DiskCacheStrategy.RESULT)
-            .into(holder.movie_poster);
+        DevRing.imageManager().loadNet(row_pos.getPoster_url(), holder.movie_poster);
         holder.movie_title.setText(row_pos.getTitle());
         holder.movie_duration.setText(row_pos.getProductId());
         holder.movie_link.setText(row_pos.getTags());

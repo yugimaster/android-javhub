@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.ljy.devring.DevRing;
+import com.ljy.devring.image.support.GlideApp;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.HttpParams;
@@ -86,11 +88,7 @@ public class MovieDetail extends Activity {
         String tags = bundle.getString("tags");
         String playLists = bundle.getString("playLists");
 
-        Glide.with(this)
-                .load(posterUrl)
-                .placeholder(R.drawable.no_poster)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .into(movie_poster);
+        DevRing.imageManager().loadNet(posterUrl, movie_poster);
         movie_title.setText(title);
         product_id.setText(productId);
         movie_cate.setText(tags);
