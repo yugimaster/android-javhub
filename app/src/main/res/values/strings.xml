@@ -4,4 +4,8 @@
     <string name="actors">主演：</string>
     <string name="desc">简介：</string>
     <string name="address">播放地址</string>
+    <string name="my_fav">我的收藏</string>
+    <string name="my_upload">我的上传</string>
+    <string name="my_download">我的下载</string>
+    <string name="account">yugimaster</string>
 </resources>

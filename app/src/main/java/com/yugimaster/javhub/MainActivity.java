@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -21,10 +22,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.gson.Gson;
+import com.ljy.devring.DevRing;
+import com.ljy.devring.image.support.LoadOption;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
@@ -50,6 +55,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private DrawerLayout drawerLayout;
+    private NavigationView mNavigationView;
 
     private ArrayList<Item> menuItemList;
     private List<RowItem> rowItemList;
@@ -61,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private ProgressDialog dialog;
     private SearchView searchView;
+
+    private ImageView mIvAvatar;
 
     private String requestUrl;
     private String categoryLink;
@@ -81,12 +89,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 初始化Fresco
+        Fresco.initialize(this);
+
         setContentView(R.layout.activity_main);
 
         rowItemList = new ArrayList<RowItem>();
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        listLeftDrawer = (ListView) findViewById(R.id.list_left_drawer);
-        listView = (ListView) findViewById(R.id.movie_list);
+
+        initView();
+
         requestUrl = HOST;
         categoryLink = "/";
         jsonMyFav = "";
@@ -103,15 +115,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (parent.getId() == R.id.list_left_drawer) {
-            System.out.println("You click menu list");
-            ListView menu_list = (ListView) parent;
-            Item menu_item = (Item) menu_list.getItemAtPosition(position);
-            categoryLink = menu_item.getLink();
-            currentStatus = REFRESH_LIST;
-            drawerLayout.closeDrawer(listLeftDrawer);
-            rowItemRefresh();
-        } else {
+        if (parent.getId() == R.id.movie_list) {
             System.out.println("You click movie list");
             ListView movieListView = (ListView) parent;
             RowItem movieItem = (RowItem) movieListView.getItemAtPosition(position);
@@ -196,7 +200,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void firstInit() {
         if (isNetworkAvailable(MainActivity.this)) {
             showLoadingDialog();
-            initMenuDrawer();
             new Thread(get_sql_query).start();
         } else
             showTipsDialog();
@@ -218,6 +221,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             new Thread(parse_html).start();
         } else
             showTipsDialog();
+    }
+
+    private void initView() {
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationView = (NavigationView) findViewById(R.id.nv_menu);
+        mIvAvatar = mNavigationView.getHeaderView(0).findViewById(R.id.iv_avatar);
+        listView = (ListView) findViewById(R.id.movie_list);
+
+        DevRing.imageManager().loadRes(R.mipmap.ic_avatar, mIvAvatar, new LoadOption().setIsCircle(true));
     }
 
     private void initMenuDrawer() {

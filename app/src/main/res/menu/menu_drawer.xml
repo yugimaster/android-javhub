@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <!-- 字体颜色由style中的app主题控制 -->
+        <item
+            android:id="@+id/nav_item_fav"
+            android:icon="@drawable/record"
+            android:title="@string/my_fav"/>
+        <item
+            android:id="@+id/nav_item_upload"
+            android:icon="@drawable/record"
+            android:title="@string/my_upload"/>
+        <item
+            android:id="@+id/nav_item_download"
+            android:icon="@drawable/record"
+            android:title="@string/my_download"/>
+    </group>
+</menu>
