@@ -1,11 +1,22 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="@style/AppBaseTheme" />
+
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Navigation Bar Color -->
         <item name="colorPrimary">@color/colorPrimary</item>
+        <!-- Notification Bar Color -->
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Fonts Color -->
+        <item name="android:textColorPrimary">@color/Black</item>
+        <!-- Solve TextView global up/lower case issue -->
+        <item name="android:textAllCaps">false</item>
+        <!-- Arrow in toolbar with animation, set animation type and color -->
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <!-- Color for text in menu in toolbar -->
+        <item name="actionMenuTextColor">@color/White</item>
+        <item name="android:windowAnimationStyle">@style/pageInOut</item>
     </style>
 
     <!-- No ActionBar theme -->
@@ -18,9 +29,18 @@
         <!--set item color in menu-->
         <item name="android:textColorSecondary">#FFFFFF</item>
     </style>
-    
-    <style name="CustomAppTheme" parent="AppTheme">
-        <item name="colorPrimary">#696969</item>
+
+    <style name="pageInOut">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_from_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_out_to_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/slide_in_from_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_to_right</item>
+    </style>
+
+    <!-- Left Arrow Style -->
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/white</item>
     </style>
 
 </resources>

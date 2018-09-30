@@ -11,11 +11,14 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,7 +32,10 @@ import android.widget.Toast;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.gson.Gson;
 import com.ljy.devring.DevRing;
+import com.ljy.devring.base.activity.IBaseActivity;
 import com.ljy.devring.image.support.LoadOption;
+import com.ljy.devring.other.RingLog;
+import com.ljy.devring.util.RingToast;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
@@ -56,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private DrawerLayout drawerLayout;
     private NavigationView mNavigationView;
+    private Toolbar mToolbar;
 
     private ArrayList<Item> menuItemList;
     private List<RowItem> rowItemList;
@@ -90,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 初始化Fresco
+        // Init Fresco
         Fresco.initialize(this);
 
         setContentView(R.layout.activity_main);
@@ -98,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         rowItemList = new ArrayList<RowItem>();
 
         initView();
+        initEvent();
 
         requestUrl = HOST;
         categoryLink = "/";
@@ -111,6 +119,67 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    private void initEvent() {
+        // Set DrawerLayout action toggle listener
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+                mToolbar, R.string.open, R.string.close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+        };
+        mDrawerToggle.syncState();
+        drawerLayout.addDrawerListener(mDrawerToggle);
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+                View mContent = drawerLayout.getChildAt(0);
+                mContent.setTranslationX(drawerView.getMeasuredWidth() * slideOffset);
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+            }
+        });
+
+        // Set menu on click event in navigation view
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_item_fav:
+                        break;
+                    case R.id.nav_item_upload:
+                        break;
+                    case R.id.nav_item_download:
+                        break;
+                }
+
+                return false; //true the menu item is selected, false is not
+            }
+        });
+
+        mIvAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RingToast.show(R.string.github);
+            }
+        });
     }
 
     @Override
@@ -226,9 +295,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void initView() {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.nv_menu);
+        mToolbar = (Toolbar) findViewById(R.id.base_toolbar);
         mIvAvatar = mNavigationView.getHeaderView(0).findViewById(R.id.iv_avatar);
         listView = (ListView) findViewById(R.id.movie_list);
 
+        mToolbar.setTitle("");
+        this.setSupportActionBar(mToolbar);
+        mToolbar.setTitle("Home");
         DevRing.imageManager().loadRes(R.mipmap.ic_avatar, mIvAvatar, new LoadOption().setIsCircle(true));
     }
 
