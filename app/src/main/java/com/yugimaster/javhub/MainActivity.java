@@ -17,6 +17,9 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -39,6 +42,8 @@ import com.ljy.devring.util.RingToast;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
+import com.yugimaster.javhub.adapter.DividerItemDecoration;
+import com.yugimaster.javhub.adapter.MyRecyclerViewAdapter;
 import com.yugimaster.javhub.api.MovieList;
 import com.yugimaster.javhub.bean.HighPronMovie;
 import com.yugimaster.javhub.bean.JsonData;
@@ -68,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private List<RowItem> rowItemList;
     private ListView listLeftDrawer;
     private ListView listView;
+    private RecyclerView mRecyclerView;
+    private MyRecyclerViewAdapter mRecycleViewAdapter;
     private MyMenuAdapter<Item> myMenuAdapter = null;
     private List<VideoItem> myFavVideoItems = null;
     private List<HighPronMovie> mySqlMovies = null;
@@ -184,29 +191,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (parent.getId() == R.id.movie_list) {
-            System.out.println("You click movie list");
-            ListView movieListView = (ListView) parent;
-            RowItem movieItem = (RowItem) movieListView.getItemAtPosition(position);
-            String posterUrl = movieItem.getPoster_url();
-            String title = movieItem.getTitle();
-            String productId = movieItem.getProductId();
-            String desc = movieItem.getDesc();
-            String actresses = movieItem.getActresses();
-            String tags= movieItem.getTags();
-            String playLists = movieItem.getPlayLists();
-            Intent intent = new Intent(MainActivity.this, MovieDetail.class);
-            Bundle bundle = new Bundle();
-            bundle.putString("poster", posterUrl);
-            bundle.putString("title", title);
-            bundle.putString("productId", productId);
-            bundle.putString("desc", desc);
-            bundle.putString("actresses", actresses);
-            bundle.putString("tags", tags);
-            bundle.putString("playLists", playLists);
-            intent.putExtras(bundle);
-            startActivity(intent);
-        }
     }
 
     @Override
@@ -297,7 +281,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mNavigationView = (NavigationView) findViewById(R.id.nv_menu);
         mToolbar = (Toolbar) findViewById(R.id.base_toolbar);
         mIvAvatar = mNavigationView.getHeaderView(0).findViewById(R.id.iv_avatar);
-        listView = (ListView) findViewById(R.id.movie_list);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.movie_list);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
         mToolbar.setTitle("");
         this.setSupportActionBar(mToolbar);
@@ -325,14 +312,39 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void initListView() {
-        CustomAdapter customAdapter = new CustomAdapter(MainActivity.this, rowItemList);
-        listView.setAdapter(customAdapter);
-        listView.setOnItemClickListener(this);
+        mRecycleViewAdapter = new MyRecyclerViewAdapter(rowItemList);
+        // set add/del item animator, use default
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(mRecycleViewAdapter);
+
+        mRecycleViewAdapter.setOnItemClickListener(new MyRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position, RowItem rowItem) {
+                String posterUrl = rowItem.getPoster_url();
+                String title = rowItem.getTitle();
+                String productId = rowItem.getProductId();
+                String desc = rowItem.getDesc();
+                String actresses = rowItem.getActresses();
+                String tags= rowItem.getTags();
+                String playLists = rowItem.getPlayLists();
+                Intent intent = new Intent(MainActivity.this, MovieDetail.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("poster", posterUrl);
+                bundle.putString("title", title);
+                bundle.putString("productId", productId);
+                bundle.putString("desc", desc);
+                bundle.putString("actresses", actresses);
+                bundle.putString("tags", tags);
+                bundle.putString("playLists", playLists);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
     }
 
     private void clearListView() {
         rowItemList.clear();
-        listView.setAdapter(null);
+        mRecyclerView.setAdapter(null);
     }
 
     private void initMyFavListView() {
