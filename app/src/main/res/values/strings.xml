@@ -3,6 +3,7 @@
     <string name="category">Genre: </string>
     <string name="actors">Actors: </string>
     <string name="desc">Plot: </string>
+    <string name="productId">ProductId: </string>
     <string name="address">Play Urls</string>
     <string name="my_fav">My Favorite</string>
     <string name="my_upload">My Upload</string>

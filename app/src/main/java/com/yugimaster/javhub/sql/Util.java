@@ -119,6 +119,7 @@ public class Util {
                 highPronMovie.setNameProduct(resultSet.getString("nameProduct"));
                 highPronMovie.setTitle(resultSet.getString("strTitle"));
                 highPronMovie.setPosterUrl(resultSet.getString("posterUrl"));
+                highPronMovie.setFanart(resultSet.getString("fanart"));
                 highPronMovie.setRate(resultSet.getString("strRate"));
                 highPronMovie.setYear(resultSet.getInt("Year"));
                 highPronMovie.setVidLists(resultSet.getString("strVid"));
@@ -146,6 +147,7 @@ public class Util {
             videoMap.put("ProductName", highPronMovie.getNameProduct());
             videoMap.put("Title", highPronMovie.getTitle());
             videoMap.put("PosterUrl", highPronMovie.getPosterUrl());
+            videoMap.put("Fanart", highPronMovie.getFanart());
             videoMap.put("Rate", highPronMovie.getRate());
             videoMap.put("Year", highPronMovie.getYear());
             videoMap.put("Vids", highPronMovie.getVidLists());

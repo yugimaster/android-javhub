@@ -19,6 +19,9 @@ public class HighPronMovie {
     @SerializedName("PosterUrl")
     private String posterUrl;
 
+    @SerializedName("Fanart")
+    private String fanart;
+
     @SerializedName("Rate")
     private String rate;
 
@@ -78,6 +81,14 @@ public class HighPronMovie {
 
     public String getPosterUrl() {
         return posterUrl;
+    }
+
+    public void setFanart(String fanart) {
+        this.fanart = fanart;
+    }
+
+    public String getFanart() {
+        return fanart;
     }
 
     public void setRate(String rate) {

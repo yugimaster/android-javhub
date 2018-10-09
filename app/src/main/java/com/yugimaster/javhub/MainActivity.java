@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mRecycleViewAdapter.setOnItemClickListener(new MyRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, RowItem rowItem) {
-                String posterUrl = rowItem.getPoster_url();
+                String fanart = rowItem.getFanart();
                 String title = rowItem.getTitle();
                 String productId = rowItem.getProductId();
                 String desc = rowItem.getDesc();
@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 String playLists = rowItem.getPlayLists();
                 Intent intent = new Intent(MainActivity.this, MovieDetail.class);
                 Bundle bundle = new Bundle();
-                bundle.putString("poster", posterUrl);
+                bundle.putString("fanart", fanart);
                 bundle.putString("title", title);
                 bundle.putString("productId", productId);
                 bundle.putString("desc", desc);
@@ -361,7 +361,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             String str_tags = StringUtil.join(tags, ",");
             String playLists = StringUtil.join(playList, "/");
             RowItem rowItem = new RowItem(imgUrl, title, productId, str_tags, actresses, productId,
-                    desc, playLists);
+                    desc, playLists, "");
             rowItemList.add(rowItem);
         }
         initListView();
@@ -376,12 +376,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             String actors = movieItem.getActors();
             String tags = movieItem.getTags();
             String vids = movieItem.getVidLists();
+            String fanart = movieItem.getFanart();
             if (actors == null)
                 actors = "";
             actors = actors.replace("|", ", ");
             tags = tags.replace("|", ", ");
             vids = vids.replace("|", "/");
-            RowItem rowItem = new RowItem(posterUrl, title, productId, tags, actors, productId, title, vids);
+            RowItem rowItem = new RowItem(posterUrl, title, productId, tags, actors, productId, title, vids, fanart);
             rowItemList.add(rowItem);
         }
         initListView();

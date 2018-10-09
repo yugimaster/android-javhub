@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="fitCenter"
-            android:src="@drawable/no_poster" />
+            android:src="@drawable/no_fanart" />
 
         <ImageView
             android:layout_width="match_parent"
@@ -51,13 +51,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="品番："
+                android:text="@string/productId"
                 android:textSize="16sp"/>
 
             <TextView
                 android:id="@+id/product_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:layout_toRightOf="@id/tv_product_id"
                 android:text="MIID-001"
                 android:textSize="16sp"/>
@@ -83,6 +84,7 @@
                 android:id="@+id/movie_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:layout_toRightOf="@id/tv_category"
                 android:text="bbbbbbbb"
                 android:textSize="16sp"/>
@@ -108,6 +110,7 @@
                 android:id="@+id/movie_actors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:layout_toRightOf="@id/tv_actors"
                 android:text="我我我"
                 android:textSize="16sp"/>

@@ -10,9 +10,10 @@ public class RowItem {
     private String movieId;
     private String desc;
     private String playLists;
+    private String fanart;
 
     public RowItem(String poster_url, String title, String productId, String tags, String actresses,
-                   String movieId, String desc, String playLists) {
+                   String movieId, String desc, String playLists, String fanart) {
         this.poster_url = poster_url;
         this.title = title;
         this.actresses = actresses;
@@ -21,6 +22,7 @@ public class RowItem {
         this.movieId = movieId;
         this.desc = desc;
         this.playLists = playLists;
+        this.fanart = fanart;
     }
 
     public void setPoster_url(String poster_url) {
@@ -85,5 +87,13 @@ public class RowItem {
 
     public String getPlayLists() {
         return playLists;
+    }
+
+    public void setFanart(String fanart) {
+        this.fanart = fanart;
+    }
+
+    public String getFanart() {
+        return fanart;
     }
 }

@@ -61,7 +61,7 @@ public class MovieList {
         System.out.println(title);
         System.out.println();
 
-        RowItem rowItem = new RowItem(url, title, duration, link, "", "", "", "");
+        RowItem rowItem = new RowItem(url, title, duration, link, "", "", "", "", "");
         mRowItemList.add(rowItem);
     }
 }

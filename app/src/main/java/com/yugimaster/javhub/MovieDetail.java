@@ -80,7 +80,7 @@ public class MovieDetail extends Activity {
     }
 
     private void setMovieInfo(Bundle bundle) {
-        String posterUrl = bundle.getString("poster");
+        String fanart = bundle.getString("fanart");
         String title = bundle.getString("title");
         String productId = bundle.getString("productId");
         String desc = bundle.getString("desc");
@@ -88,7 +88,7 @@ public class MovieDetail extends Activity {
         String tags = bundle.getString("tags");
         String playLists = bundle.getString("playLists");
 
-        DevRing.imageManager().loadNet(posterUrl, movie_poster);
+        DevRing.imageManager().loadNet(fanart, movie_poster);
         movie_title.setText(title);
         product_id.setText(productId);
         movie_cate.setText(tags);
