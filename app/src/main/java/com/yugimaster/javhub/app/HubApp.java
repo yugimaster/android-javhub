@@ -2,6 +2,9 @@ package com.yugimaster.javhub.app;
 
 import android.app.Application;
 
+import com.liulishuo.filedownloader.FileDownloader;
+import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection;
+import com.liulishuo.filedownloader.util.FileDownloadLog;
 import com.ljy.devring.DevRing;
 import com.ljy.devring.util.FileUtil;
 import com.yugimaster.javhub.R;
@@ -19,6 +22,21 @@ public class HubApp extends Application {
 
         //*********1.初始化**********
         DevRing.init(this);
+
+        FileDownloadLog.NEED_LOG = true;
+
+        /**
+         * just for cache Application's Context, and ':filedownloader' progress will NOT be launched
+         * by below code, so please do not worry about performance.
+         * @see FileDownloader#init(Context)
+         */
+        FileDownloader.setupOnApplicationOnCreate(this)
+                .connectionCreator(new FileDownloadUrlConnection
+                        .Creator(new FileDownloadUrlConnection.Configuration()
+                        .connectTimeout(15000)
+                        .readTimeout(15000)
+                ))
+                .commit();
 
 
         //*********2.根据你的需求进行相关模块的全局配置，下面对每个配置方法进行了说明**********

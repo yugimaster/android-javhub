@@ -162,5 +162,27 @@
             android:layout_height="wrap_content"
             android:numColumns="2" />
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/almost_gray" />
+
+        <TextView
+            android:id="@+id/movie_download"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/download"
+            android:textSize="16sp"/>
+
+        <com.yugimaster.javhub.view.GridViewInScrollView
+            android:id="@+id/download_button_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numColumns="auto_fit"/>
+
     </LinearLayout>
 </ScrollView>

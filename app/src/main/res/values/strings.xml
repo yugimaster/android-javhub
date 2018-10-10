@@ -5,6 +5,7 @@
     <string name="desc">Plot: </string>
     <string name="productId">ProductId: </string>
     <string name="address">Play Urls</string>
+    <string name="download">Download Movies</string>
     <string name="my_fav">My Favorite</string>
     <string name="my_upload">My Upload</string>
     <string name="my_download">My Download</string>

@@ -1,11 +1,14 @@
 package com.yugimaster.javhub;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -19,8 +22,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.liulishuo.filedownloader.BaseDownloadTask;
+import com.liulishuo.filedownloader.FileDownloadListener;
+import com.liulishuo.filedownloader.FileDownloader;
 import com.ljy.devring.DevRing;
 import com.ljy.devring.image.support.GlideApp;
+import com.ljy.devring.util.FileUtil;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.HttpParams;
@@ -35,6 +42,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -49,12 +57,20 @@ public class MovieDetail extends Activity {
     private TextView movie_title, movie_cate, movie_actors, movie_desc, product_id;
     private ImageView movie_poster;
     private GridViewInScrollView buttonGridView;
+    private GridViewInScrollView btnDownloadView;
 //    private String url, poster, title, category, actors, desc;
     private ArrayList<HashMap<String, String>> btnList = new ArrayList<HashMap<String, String>>();
+
+    private String mDownloadUrl;
+    private int mCurrentMode;
+    private int mCurrentIndex;
 
     private static final String PLAY_HOST = "http://play.openhub.tv";
     private static final String PLAY_API = "/playurl";
     private static final String TAG = "JavHub";
+
+    private static final int PLAY_MODE = 1;
+    private static final int DOWNLOAD_MODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +79,10 @@ public class MovieDetail extends Activity {
 
         Bundle bundle = getIntent().getExtras();
         String link = bundle.getString("link");
+        mCurrentMode = -1;
 
         buttonGridView = (GridViewInScrollView) findViewById(R.id.play_button_list);
+        btnDownloadView = (GridViewInScrollView) findViewById(R.id.download_button_list);
         movie_title = (TextView)findViewById(R.id.movie_title);
         movie_cate = (TextView)findViewById(R.id.movie_category);
         movie_actors = (TextView)findViewById(R.id.movie_actors);
@@ -105,6 +123,7 @@ public class MovieDetail extends Activity {
             btnList.add(map);
         }
         init_play_btns();
+        init_download_btns();
     }
 
     public void playUrlWithAndroidPlayer(String url) {
@@ -114,6 +133,81 @@ public class MovieDetail extends Activity {
         Log.e("URI:", uri.toString());
         intent.setDataAndType(uri, "video/*");
         startActivity(intent);
+    }
+
+    private void playLocalWithAndroidPlayer(String path) {
+        Uri uri = Uri.parse("file://" + path);
+        // use system player
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Log.e("URI:", uri.toString());
+        intent.setDataAndType(uri, "video/mp4");
+        startActivity(intent);
+    }
+
+    private void downloadFile(String url, int postion) {
+//        String productId = product_id.getText().toString();
+//        String dirName =  getApplicationContext().getExternalFilesDir("") + "/" + productId;
+//        Log.e("DownloadFile", dirName + "/");
+//        File file = new File(dirName);
+//        // create dir in SD
+//        if (!file.exists()) {
+//            file.mkdir();
+//        }
+//
+//        String videoName = productId + "_" + postion + ".mp4";
+//        String fileName = dirName + "/" + postion + ".mp4";
+//        File videoFile = new File(fileName);
+//        if (videoFile.exists()) {
+//            playLocalWithAndroidPlayer(fileName);
+//        } else {
+//            FileDownloader.getImpl().create(url)
+//                    .setPath(fileName).setListener(new FileDownloadListener() {
+//                @Override
+//                protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+//                    Log.e("DownloadFile", videoName + " is pending");
+//                }
+//
+//                @Override
+//                protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+//                    Log.e("DownloadFile", videoName + " is progress");
+//                }
+//
+//                @Override
+//                protected void completed(BaseDownloadTask task) {
+//                    Toast.makeText(getApplicationContext(), videoName + " is completed", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                @Override
+//                protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+//                    Toast.makeText(getApplicationContext(), videoName + " is paused", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                @Override
+//                protected void error(BaseDownloadTask task, Throwable e) {
+//                    Log.e("DownloadFile", videoName + ": has error");
+//                    mDownloadUrl = url;
+//                    mCurrentIndex = postion;
+//                    handler.sendEmptyMessage(2);
+//                }
+//
+//                @Override
+//                protected void warn(BaseDownloadTask task) {
+//
+//                }
+//            }).start();
+//        }
+        final Intent intent = new Intent();
+        Context context = getApplicationContext();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            final ComponentName componentName = intent.resolveActivity(context.getPackageManager());
+            Log.i("DownloadFile","componentName = " + componentName.getClassName());
+            context.startActivity(Intent.createChooser(intent, "请选择浏览器"));
+        } else {
+            Toast.makeText(getApplicationContext(), "请下载浏览器",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
 //    Runnable runnable = new Runnable() {
@@ -168,6 +262,9 @@ public class MovieDetail extends Activity {
                     Bitmap bmp = (Bitmap)msg.obj;
                     movie_poster.setImageBitmap(bmp);
                     break;
+                case 2:
+                    downloadFile(mDownloadUrl, mCurrentIndex);
+                    break;
             }
         }
     };
@@ -212,13 +309,37 @@ public class MovieDetail extends Activity {
                             Toast.LENGTH_SHORT).show();
                 } else {
                     Long nowTime = Common.getUTCTime();
-                    playUrlPost(nowTime, btn_vid);
+                    mCurrentMode = PLAY_MODE;
+                    playUrlPost(nowTime, btn_vid, position);
                 }
             }
         });
     }
 
-    private void playUrlPost(Long nowTime, String vid) {
+    private void init_download_btns() {
+        SimpleAdapter simpleAdapter = new SimpleAdapter(MovieDetail.this, btnList,
+                R.layout.play_button,
+                new String[]{"name"},
+                new int[]{R.id.play_btn});
+        btnDownloadView.setAdapter(simpleAdapter);
+        btnDownloadView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HashMap<String, String> map = (HashMap<String, String>) btnDownloadView.getItemAtPosition(position);
+                String btn_name = map.get("name");
+                String btn_vid = map.get("vid");
+                if (btn_vid.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "视频ID为空！此视频无法下载", Toast.LENGTH_SHORT).show();
+                } else {
+                    Long nowTime = Common.getUTCTime();
+                    mCurrentMode = DOWNLOAD_MODE;
+                    playUrlPost(nowTime, btn_vid, position);
+                }
+            }
+        });
+    }
+
+    private void playUrlPost(Long nowTime, String vid, int position) {
         String url = PLAY_HOST + PLAY_API + "?random=" + Long.toString(nowTime);
         HttpParams httpParams = new HttpParams();
         httpParams.put("v", vid);
@@ -234,7 +355,11 @@ public class MovieDetail extends Activity {
                             Toast.makeText(getApplicationContext(), "无效的播放地址！",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            playUrlWithAndroidPlayer(result);
+                            if (mCurrentMode == 1) {
+                                playUrlWithAndroidPlayer(result);
+                            } else if (mCurrentMode == 2) {
+                                downloadFile(result, position + 1);
+                            }
                         }
                     }
 
